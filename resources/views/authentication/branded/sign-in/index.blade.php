@@ -1,18 +1,9 @@
-<!--
-Product: Metronic is a toolkit of UI components built with Tailwind CSS for developing scalable web applications quickly and efficiently
-Version: v9.4.6
-Author: Keenthemes
-Contact: support@keenthemes.com
-Website: https://www.keenthemes.com
-Support: https://devs.keenthemes.com
-Follow: https://www.twitter.com/keenthemes
-License: https://keenthemes.com/metronic/tailwind/docs/getting-started/license
--->
+
 <!DOCTYPE html>
 <html class="h-full" data-kt-theme="true" data-kt-theme-mode="light" dir="ltr" lang="en">
  <head><base href="../../../../../">
   <title>
-   Metronic - Tailwind CSS Sign In
+   Revuteck - Defines Everything
   </title>
   <meta charset="utf-8"/>
   <meta content="follow, index" name="robots"/>
@@ -81,8 +72,9 @@ License: https://keenthemes.com/metronic/tailwind/docs/getting-started/license
   <div class="grid lg:grid-cols-2 grow">
    <div class="flex justify-center items-center p-8 lg:p-10 order-2 lg:order-1">
     <div class="kt-card max-w-[370px] w-full">
-     <form action="#" class="kt-card-content flex flex-col gap-5 p-10" id="sign_in_form" method="get">
-      <div class="text-center mb-2.5">
+     <form action="{{ route('login.post') }}" class="kt-card-content flex flex-col gap-5 p-10" id="sign_in_form" method="POST">
+     
+     <div class="text-center mb-2.5">
        <h3 class="text-lg font-medium text-mono leading-none mb-2.5">
         Sign in
        </h3>
@@ -113,13 +105,17 @@ License: https://keenthemes.com/metronic/tailwind/docs/getting-started/license
         Or
        </span>
        <span class="border-t border-border w-full">
-       </span>
+       </span>      
       </div>
+      @csrf 
       <div class="flex flex-col gap-1">
        <label class="kt-form-label font-normal text-mono">
         Email
        </label>
-       <input class="kt-input" placeholder="email@email.com" type="text" value=""/>
+       <input class="kt-input" name="email" placeholder="email@email.com" type="email" value=""/>
+       @error('email')
+            <span class="text-xs text-danger mt-1">{{ $message }}</span>
+        @enderror
       </div>
       <div class="flex flex-col gap-1">
        <div class="flex items-center justify-between gap-1">
@@ -131,7 +127,8 @@ License: https://keenthemes.com/metronic/tailwind/docs/getting-started/license
         </a>
        </div>
        <div class="kt-input" data-kt-toggle-password="true">
-        <input name="user_password" placeholder="Enter Password" type="password" value=""/>
+        <input name="password" placeholder="Enter Password"  type="password" value=""/>
+
         <button class="kt-btn kt-btn-sm kt-btn-ghost kt-btn-icon bg-transparent! -me-1.5" data-kt-toggle-password-trigger="true" type="button">
          <span class="kt-toggle-password-active:hidden">
           <i class="ki-filled ki-eye text-muted-foreground">

@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html class="h-full" data-kt-theme="true" data-kt-theme-mode="light" dir="ltr" lang="en">
  <head>
-  <title>
-    Revuteck - Defines Everything
-  </title>
+  @include('partials.header')
   
  </head>
  <body class="antialiased flex h-full text-base text-foreground bg-background demo1 kt-sidebar-fixed kt-header-fixed">
@@ -34,8 +32,7 @@
   </script>
   <div class="flex grow">
     @include('partials.sidebar')
-   <div class="kt-wrapper flex grow flex-col">
-    @include('partials.header')
+ 
     <main class="grow pt-3" id="content" role="content">
             <div class="kt-container-fixed">
                     <div class="flex flex-wrap items-center lg:items-end justify-between gap-5 pb-7.5">
@@ -237,8 +234,7 @@
             </div>
             </main>
     @include('partials.footer')
-    </div>
-   </div>
+   
   <div class="kt-modal" data-kt-modal="true" id="create_permission_modal">
     <div class="kt-modal-content max-w-[600px] top-[10%]">
         <div class="kt-modal-header py-4 px-5 border-b border-border">
@@ -275,7 +271,15 @@
 
                         <div class="flex flex-col gap-2">
                             <label class="kt-label font-medium text-sm text-foreground">Action Name <span class="text-destructive">*</span></label>
-                            <input class="kt-input" name="action_name" id="action_name" placeholder="e.g. Create" required type="text"/>
+                            <select class="kt-select" name="action_name" id="action_name">
+                                <option value="VIEW">VIEW</option>
+                                <option value="CREATE">CREATE</option>
+                                <option value="UPDATE">UPDATE</option>
+                                <option value="STATUS">STATUS</option>
+                                <option value="ASSIGN">ASSIGN</option>
+                                <option value="ASSIGN_MANAGER">ASSIGN_MANAGER</option>
+                            </select>
+                            <!-- <input class="kt-input" name="action_name" id="action_name" placeholder="e.g. Create" required type="text"/> -->
                         </div>
                     </div>
 
@@ -382,43 +386,62 @@
 
 
         // ==========================================
-        // 2. EDIT PERMISSION LOGIC
-        // ==========================================
-        document.querySelectorAll('.edit-permission-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const modal = document.querySelector('#create_permission_modal');
-                const form = modal.querySelector('form');
-                const modalTitle = modal.querySelector('.kt-modal-title');
-                
-                // 1. Change Modal Title & Action
-                modalTitle.innerText = 'Edit Permission';
-                form.action = `/permissions/${this.getAttribute('data-id')}`;
-                
-                // 2. PUT Method spoofing
-                if (!form.querySelector('input[name="_method"]')) {
-                    const methodInput = document.createElement('input');
-                    methodInput.type = 'hidden';
-                    methodInput.name = '_method';
-                    methodInput.value = 'PUT';
-                    form.appendChild(methodInput);
-                }
+// 2. EDIT PERMISSION LOGIC
+// ==========================================
+document.addEventListener('click', function(e) {
+    // 1. Use Event Delegation to catch clicks even after Datatable redraws
+    const button = e.target.closest('.edit-permission-btn');
+    
+    if (button) {
+        e.preventDefault();
+        
+        const modal = document.querySelector('#create_permission_modal');
+        const form = modal.querySelector('form');
+        const modalTitle = modal.querySelector('.kt-modal-title');
+        
+        // 2. Change Modal Title & Action
+        modalTitle.innerText = 'Edit Permission';
+        form.action = `/permissions/${button.getAttribute('data-id')}`;
+        
+        // 3. PUT Method spoofing
+        if (!form.querySelector('input[name="_method"]')) {
+            const methodInput = document.createElement('input');
+            methodInput.type = 'hidden';
+            methodInput.name = '_method';
+            methodInput.value = 'PUT';
+            form.appendChild(methodInput);
+        }
 
-                // 3. Fill text inputs
-                document.getElementById('module_name').value = this.getAttribute('data-module') || '';
-                document.getElementById('action_name').value = this.getAttribute('data-action') || '';
-                document.getElementById('permission_name').value = this.getAttribute('data-name') || '';
-                document.getElementById('permission_code').value = this.getAttribute('data-code') || '';
-                document.getElementById('description').value = this.getAttribute('data-description') || '';
-                
-                // 4. Handle Switches
-                form.querySelector('input[name="is_active"]').checked = this.getAttribute('data-active') == 1;
+        // 4. Fill text inputs
+        document.getElementById('action_name').value = button.getAttribute('data-action') || '';
+        document.getElementById('permission_name').value = button.getAttribute('data-name') || '';
+        document.getElementById('permission_code').value = button.getAttribute('data-code') || '';
+        document.getElementById('description').value = button.getAttribute('data-description') || '';
+        
+        // 5. Fill Select (Dropdown) & Refresh Metronic UI
+        const moduleInput = document.getElementById('module_name');
+        moduleInput.value = button.getAttribute('data-module') || '';
+        moduleInput.dispatchEvent(new Event('change')); // Trigger standard event
+        
+        // Check if KTSelect exists and update the visual UI instance
+        if (typeof KTSelect !== 'undefined') {
+            const selectInstance = KTSelect.getInstance(moduleInput);
+            if (selectInstance) {
+                selectInstance.update();
+            }
+        }
 
-                // 5. Open the modal
-                const modalInstance = KTModal.getInstance(modal);
-                modalInstance.show();
-            });
-        });
+        // 6. Handle Switches safely
+        const activeSwitch = form.querySelector('input[name="is_active"]');
+        if (activeSwitch) {
+            activeSwitch.checked = button.getAttribute('data-active') == 1;
+        }
 
+        // 7. Open the modal safely using getOrCreateInstance
+        const modalInstance = KTModal.getOrCreateInstance(modal);
+        modalInstance.show();
+    }
+});
         // ==========================================
         // 3. NATIVE DELETE CONFIRMATION LOGIC
         // ==========================================

@@ -33,6 +33,7 @@ class PermissionController extends Controller
         return view('Administration.permissions-trash', compact('trashedPermissions'));
     }
 
+   
     /**
      * Show the form for creating a new resource.
      */

@@ -26,4 +26,15 @@ class Role extends Model
         'is_system_role',
         'is_active',
     ];
+
+
+    public function permissions()
+            {
+            return $this->belongsToMany(
+                \App\Models\Permission::class,
+                'master_erp.role_permissions', // pivot table
+                'role_id',
+                'permission_id'
+            );
+        }
 }

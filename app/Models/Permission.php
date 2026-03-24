@@ -39,4 +39,14 @@ class Permission extends Model
     protected $casts = [
         'is_active' => 'boolean',
     ];
+
+    public function roles()
+{
+    return $this->belongsToMany(
+        Role::class,
+        'master_erp.role_permissions',
+        'permission_id',
+        'role_id'
+    );
+}
 }

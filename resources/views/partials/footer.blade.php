@@ -36,7 +36,9 @@
      <!-- End of Container -->
     </footer>
     <!-- End of Footer -->
-  
+  </div>
+   <!-- End of Wrapper -->
+  </div>
   <!-- End of Main -->
   
   <!-- End of Page -->
