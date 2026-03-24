@@ -11,10 +11,7 @@ License: https://keenthemes.com/metronic/tailwind/docs/getting-started/license
 <!DOCTYPE html>
 <html class="h-full" data-kt-theme="true" data-kt-theme-mode="light" dir="ltr" lang="en">
  <head>
-  <title>
-   Metronic - Tailwind CSS
-  </title>
-  
+@include('partials.header')
  </head>
  <body class="antialiased flex h-full text-base text-foreground bg-background demo1 kt-sidebar-fixed kt-header-fixed">
   <!-- Theme Mode -->
@@ -45,10 +42,10 @@ License: https://keenthemes.com/metronic/tailwind/docs/getting-started/license
   </script>
   <!-- End of Theme Mode -->
   <!-- Page -->
+      <div class="flex grow">
   @include('partials.sidebar')
    <!-- Wrapper -->
-   <div class="kt-wrapper flex grow flex-col">
-    @include('partials.header')
+   
     <!-- End of Header -->
     <!-- Content -->
     <main class="grow pt-5" id="content" role="content">

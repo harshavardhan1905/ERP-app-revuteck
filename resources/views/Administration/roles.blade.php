@@ -2,9 +2,7 @@
 <!DOCTYPE html>
 <html class="h-full" data-kt-theme="true" data-kt-theme-mode="light" dir="ltr" lang="en">
  <head>
-  <title>
-    Revuteck - Defines Everything
-  </title>
+  @include('partials.header')
   
  </head>
  <body class="antialiased flex h-full text-base text-foreground bg-background demo1 kt-sidebar-fixed kt-header-fixed">
@@ -40,8 +38,8 @@
   <div class="flex grow">
     @include('partials.sidebar')
    <!-- Wrapper -->
-   <div class="kt-wrapper flex grow flex-col">
-    @include('partials.header')
+   
+    
     <!-- End of Header -->
     <!-- Content -->
     <main class="grow pt-3" id="content" role="content">
@@ -257,12 +255,10 @@
     <!-- Footer -->
      @include('partials.footer')
     <!-- End of Footer -->
-    </div>
-   <!-- End of Wrapper -->
-  </div>
+    
   <!-- End of Main -->
   <!-- End of Page -->
-
+</div>
   <!-- Add Role -->
    <!-- Update model -->
    <div class="kt-modal" data-kt-modal="true" id="create_role_modal">

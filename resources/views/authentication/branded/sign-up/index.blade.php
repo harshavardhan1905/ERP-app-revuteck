@@ -1,18 +1,9 @@
-<!--
-Product: Metronic is a toolkit of UI components built with Tailwind CSS for developing scalable web applications quickly and efficiently
-Version: v9.4.6
-Author: Keenthemes
-Contact: support@keenthemes.com
-Website: https://www.keenthemes.com
-Support: https://devs.keenthemes.com
-Follow: https://www.twitter.com/keenthemes
-License: https://keenthemes.com/metronic/tailwind/docs/getting-started/license
--->
+
 <!DOCTYPE html>
 <html class="h-full" data-kt-theme="true" data-kt-theme-mode="light" dir="ltr" lang="en">
  <head><base href="../../../../../">
   <title>
-   Metronic - Tailwind CSS Sign Up
+   Revuteck - Defines Everything
   </title>
   <meta charset="utf-8"/>
   <meta content="follow, index" name="robots"/>
