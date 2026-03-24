@@ -15,7 +15,7 @@ class RolesPermissionsController extends Controller
      */
     public function index()
     {
-        $data = DB::table('master_erp.role_permissions as a')
+        $raw_data = DB::table('master_erp.role_permissions as a')
             ->leftJoin('master_erp.roles as b', 'a.role_id', '=', 'b.id')
             ->leftJoin('master_erp.permissions as c', 'a.permission_id', '=', 'c.id')
             ->select(
@@ -32,7 +32,30 @@ class RolesPermissionsController extends Controller
             ->orderBy('c.module_name')
             ->get();
 
-        return view('Administration.roles-permissions', compact('data'));
+        // 2. Group the data by Role ID so we only have ONE row per role
+        $data = $raw_data->groupBy('role_id')->map(function ($permissionsList, $role_id) {
+            $first = $permissionsList->first(); // Get the role details from the first item
+
+            return (object) [
+                'role_id'    => $role_id,
+                'role_name'  => $first->role_name,
+                'role_code'  => $first->role_code,
+                'role_level' => $first->role_level,
+
+                // Extract a unique array of Modules (e.g., ['USER', 'COMPANY', 'BRANCH'])
+                'modules'    => $permissionsList->pluck('module_name')->unique()->filter()->values(),
+
+                // Count occurrences of each action (e.g., ['CREATE' => 5, 'VIEW' => 12, 'DELETE' => 2])
+                'actions' => $permissionsList->groupBy('action_name')->map(function ($items) {
+                    return $items->pluck('module_name')->unique()->filter()->values();
+                })->filter(),
+
+                // Extract a clean array of all permission names
+                'permissions' => $permissionsList->pluck('permission_name')->filter()->values(),
+            ];
+        })->values(); // Reset the keys
+        $permissions = Permission::where('is_active', true)->get()->groupBy('module_name');
+        return view('Administration.roles-permissions', compact('data', 'permissions'));
     }
 
     /**
@@ -86,14 +109,14 @@ class RolesPermissionsController extends Controller
     }
 
 
-     public function assignPage($id)
-        {
-            $role = Role::with('permissions')->findOrFail($id);
+    public function assignPage($id)
+    {
+        $role = Role::with('permissions')->findOrFail($id);
 
-            $permissions = Permission::where('is_active', true)->get();
+        $permissions = Permission::where('is_active', true)->get();
 
-            return view('Administration.assign-permissions', compact('role', 'permissions'));
-        }
+        return view('Administration.roles-permissions', compact('role', 'permissions'));
+    }
     /**
      * 🔹 5. CREATE NEW PERMISSION
      */
