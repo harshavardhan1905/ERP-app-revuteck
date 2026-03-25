@@ -10,11 +10,11 @@ class Role extends Model
 {
     use HasFactory;
     use SoftDeletes;
-  
 
+    protected $connection = 'pgsql'; // VERY IMPORTANT
     // Define your custom schema and table
     protected $table = 'master_erp.roles';
-    
+
 
     // IMPORTANT: You must list all columns you want to allow Laravel to insert into
     protected $fillable = [
@@ -29,12 +29,12 @@ class Role extends Model
 
 
     public function permissions()
-            {
-            return $this->belongsToMany(
-                \App\Models\Permission::class,
-                'master_erp.role_permissions', // pivot table
-                'role_id',
-                'permission_id'
-            );
-        }
+    {
+        return $this->belongsToMany(
+            \App\Models\Permission::class,
+            'master_erp.role_permissions', // pivot table
+            'role_id',
+            'permission_id'
+        );
+    }
 }

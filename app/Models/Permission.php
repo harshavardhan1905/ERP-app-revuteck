@@ -15,6 +15,7 @@ class Permission extends Model
      *
      * @var string
      */
+    protected $connection = 'pgsql';
     protected $table = 'master_erp.permissions';
 
     /**
@@ -41,12 +42,12 @@ class Permission extends Model
     ];
 
     public function roles()
-{
-    return $this->belongsToMany(
-        Role::class,
-        'master_erp.role_permissions',
-        'permission_id',
-        'role_id'
-    );
-}
+    {
+        return $this->belongsToMany(
+            Role::class,
+            'master_erp.role_permissions',
+            'permission_id',
+            'role_id'
+        );
+    }
 }

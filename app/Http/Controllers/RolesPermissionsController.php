@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Role;
 use App\Models\Permission;
+use Illuminate\Validation\Rule; // <--- MUST BE HERE, AT THE TOP
 
 class RolesPermissionsController extends Controller
 {
@@ -75,37 +76,55 @@ class RolesPermissionsController extends Controller
     /**
      * 🔹 3. UPDATE ROLE PERMISSIONS (CHECKBOX MATRIX)
      */
-    public function update(Request $request, $id)
-    {
-        $role = Role::findOrFail($id);
 
-        // 🚨 LEVEL SECURITY
-        if (auth()->user()->role->role_level > $role->role_level) {
-            abort(403, 'Unauthorized action');
-        }
-
-        $role->permissions()->sync($request->permissions ?? []);
-
-        return back()->with('success', 'Permissions updated successfully!');
-    }
 
     /**
      * 🔹 4. ADD SINGLE PERMISSION TO ROLE (NEW 🔥)
      */
-    public function assignPermission(Request $request)
+
+
+    public function update(Request $request)
     {
         $request->validate([
-            'role_id' => 'required|exists:roles,id',
-            'permission_id' => 'required|exists:permissions,id',
+            'role_id' => 'required|exists:pgsql.master_erp.roles,id',
+            'permission_ids' => 'required|array',
+            'permission_ids.*' => 'required|exists:pgsql.master_erp.permissions,id',
         ]);
 
-        DB::table('role_permissions')->insert([
-            'role_id' => $request->role_id,
-            'permission_id' => $request->permission_id,
-            'created_at' => now(),
-        ]);
+        try {
+            $role = Role::findOrFail($request->role_id);
 
-        return back()->with('success', 'Permission assigned to role!');
+            // ✅ Get already assigned permissions
+            $existing = $role->permissions()->pluck('permission_id')->toArray();
+
+            // ✅ Separate new & duplicate
+            $newPermissions = array_diff($request->permission_ids, $existing);
+            $duplicatePermissions = array_intersect($request->permission_ids, $existing);
+
+            // ✅ Insert only new ones
+            if (!empty($newPermissions)) {
+                $role->permissions()->attach($newPermissions);
+            }
+
+            // ✅ Build message
+            $messages = [];
+
+            if (!empty($newPermissions)) {
+                $messages[] = count($newPermissions) . " permission(s) assigned successfully";
+            }
+
+            if (!empty($duplicatePermissions)) {
+                $messages[] = count($duplicatePermissions) . " already existed (skipped)";
+            }
+
+            if (empty($newPermissions) && empty($duplicatePermissions)) {
+                return back()->with('error', 'No valid permissions selected');
+            }
+
+            return back()->with('success', implode(' | ', $messages));
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error: ' . $e->getMessage());
+        }
     }
 
 

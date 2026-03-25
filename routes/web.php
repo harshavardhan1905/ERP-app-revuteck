@@ -14,7 +14,7 @@ use App\Http\Controllers\AuthController; // Add this line at the top!
 use App\Http\Controllers\RolesPermissionsController;
 
 Route::get('/', function () {
-    return view('index'); 
+    return view('index');
 });
 
 // --- 1. Specific Routes (Must come first) ---
@@ -41,26 +41,25 @@ Route::delete('/permissions/{id}/force-delete', [PermissionController::class, 'f
 //Roles Permissions CRUD 
 Route::get('/roles-permissions', [RolesPermissionsController::class, 'index']);
 Route::get('/roles/{id}/permissions', [RolesPermissionsController::class, 'edit']);
-Route::post('/roles/{id}/permissions', [RolesPermissionsController::class, 'update']);
-Route::post('/roles-permissions/assign', [RolesPermissionsController::class, 'assignPermission']);
+Route::post('/roles-permissions/assign', [RolesPermissionsController::class, 'update']);
 Route::post('/permissions/store', [RolesPermissionsController::class, 'storePermission']);
 
 
 // Authentication Routes
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 // 👇 THIS is the exact route your form is looking for
-Route::post('/login', [AuthController::class, 'login'])->name('login.post'); 
+Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-    
+
 
 // ==========================
 // PAGES ROUTING LOGICS 
 // ==========================
 Route::get('/default', function () {
-    return view('public-profile.profiles.default'); 
+    return view('public-profile.profiles.default');
 });
 
-Route::get('/blogger', function (){
+Route::get('/blogger', function () {
     return view('public-profile.profiles.blogger');
 });
 
@@ -70,11 +69,21 @@ Route::get('/assign-permissions/{id}', [RolesPermissionsController::class, 'assi
 
 // --- Branded Authentication Routes ---
 Route::prefix('auth')->name('auth.')->group(function () {
-    Route::get('/login', function () { return view('authentication.branded.sign-in.index'); })->name('login');
-    Route::get('/register', function () { return view('authentication.branded.sign-up.index'); })->name('register');
-    Route::get('/forgot-password', function () { return view('authentication.branded.reset-password.enter-email.index'); })->name('forgot-password');
-    Route::get('/check-email', function () { return view('authentication.branded.reset-password.check-email.index'); })->name('check-email');
-    Route::get('/change-password', function () { return view('authentication.branded.reset-password.change-password.index'); })->name('change-password');
+    Route::get('/login', function () {
+        return view('authentication.branded.sign-in.index');
+    })->name('login');
+    Route::get('/register', function () {
+        return view('authentication.branded.sign-up.index');
+    })->name('register');
+    Route::get('/forgot-password', function () {
+        return view('authentication.branded.reset-password.enter-email.index');
+    })->name('forgot-password');
+    Route::get('/check-email', function () {
+        return view('authentication.branded.reset-password.check-email.index');
+    })->name('check-email');
+    Route::get('/change-password', function () {
+        return view('authentication.branded.reset-password.change-password.index');
+    })->name('change-password');
 });
 
 // --- 2. Wildcard / Catch-All Routes (Must come last) ---
@@ -86,11 +95,11 @@ Route::get('/{page}', function ($page) {
     if (view()->exists($viewPath)) {
         return view($viewPath);
     }
-    
+
     // IMPORTANT: Don't abort 404 here, or it won't check the next wildcard
     // Fallback to check Administration folder if not found in profiles
     $adminViewPath = "Administration." . $page;
-    if(view()->exists($adminViewPath)){
+    if (view()->exists($adminViewPath)) {
         return view($adminViewPath);
     }
 

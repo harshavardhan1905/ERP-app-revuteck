@@ -318,7 +318,7 @@
                         </button>
                     </div>
 
-                    <form method="POST" action="{{ url('/roles-permissions/assign') }}">
+                    <form id="assign_permission_form" method="POST" action="{{ url('/roles-permissions/assign') }}">
                         @csrf
                         <input type="hidden" name="role_id" id="modal_role_id" value="">
 
@@ -336,7 +336,9 @@
                                 <select id="dynamic_module_select" class="kt-select w-full" required>
                                     <option value="" disabled selected>-- Choose Category --</option>
                                     @foreach($permissions as $module_name => $perms)
-                                    <option value="{{ $module_name }}">{{ strtoupper($module_name) }}</option>
+                                    <option value="{{ $module_name }}" data-perms='@json($perms)'>
+                                        {{ strtoupper($module_name) }}
+                                    </option>
                                     @endforeach
                                 </select>
                             </div>
@@ -344,7 +346,6 @@
                             <div id="action_select_container" class="hidden">
                                 <label class="text-sm font-medium mb-2 block">2. Select Action(s):</label>
                                 <div class="border border-border rounded-lg p-4 bg-secondary/10">
-
                                     <div class="flex items-center gap-2 mb-3 pb-3 border-b border-border">
                                         <input type="checkbox" id="select_all_actions" class="kt-checkbox kt-checkbox-sm kt-checkbox-primary cursor-pointer">
                                         <label for="select_all_actions" class="font-semibold text-sm cursor-pointer select-none">Select All</label>
@@ -352,7 +353,6 @@
 
                                     <div id="dynamic_action_checkboxes" class="flex flex-col gap-3 max-h-40 overflow-y-auto pr-2">
                                     </div>
-
                                 </div>
                             </div>
                         </div>
