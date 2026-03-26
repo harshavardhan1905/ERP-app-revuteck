@@ -65,10 +65,10 @@
                                         <div class="flex items-center gap-2.5">
                                             <div class="kt-input max-w-48">
                                                 <i class="ki-filled ki-magnifier"></i>
-                                                <input data-kt-datatable-search="#kt_datatable_1" placeholder="Search Permission" type="text">
+                                                <input data-kt-datatable-search="#kt_datatable_1" id="searchInput"  placeholder="Search Permission" type="text">
                                             </div>
 
-                                            <a href="{{ url('/permissions/trash') }}" class="kt-btn kt-btn-icon kt-btn-light kt-btn-sm relative" title="Trash Bin">
+                                            <a href="#" class="kt-btn kt-btn-icon kt-btn-light kt-btn-sm relative" title="Trash Bin">
                                                 <i class="ki-filled ki-trash"></i>
 
                                                 <span class="absolute top-0 right-0 -mt-1 -mr-1 flex h-2 w-2">
@@ -124,6 +124,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
+
                                                         @forelse($data as $row)
                                                         <tr class="align-top">
 
@@ -226,12 +227,16 @@
                                                             </td>
 
                                                             <!-- ACTION BUTTON -->
-
+                                                            <!-- <td>
+                                                              <p>{{ $row->permissions }}</p>
+                                                            </td> -->
                                                             <td class="text-right py-4">
+
                                                                 <button type="button" class="kt-btn kt-btn-primary kt-btn-sm open-assign-modal"
                                                                     data-role-id="{{ $row->role_id }}"
                                                                     data-role-level="{{$row->role_level}}"
                                                                     data-role-name="{{ $row->role_name }}"
+                                                                    data-role-category="{{ $row->modules[0] ?? '' }}"
                                                                     data-existing="{{ json_encode($row->permissions) }}">
                                                                     <i class="ki-filled ki-plus"></i> Assign
                                                                 </button>
@@ -273,6 +278,9 @@
             </div>
         </main>
         @include('partials.footer')
+
+   
+
         <!-- modal view for all permissions -->
         <div class="kt-modal hidden" data-kt-modal="true" id="view_permissions_modal">
             <div class="kt-modal-dialog flex items-center justify-center min-h-screen p-4">
@@ -398,6 +406,10 @@
 
             </div>
         </div>
+             <!-- Store grouped permissions in a data attribute -->
+        <script type="application/json" id="grouped-permissions-data">
+            @json($permissions)
+        </script>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 // ==========================================
@@ -542,6 +554,7 @@
                 document.addEventListener('click', function(e) {
                     const button = e.target.closest('.open-assign-modal');
 
+
                     if (button) {
                         e.preventDefault();
 
@@ -549,11 +562,36 @@
                         const roleId = button.getAttribute('data-role-id');
                         const roleLevel = button.getAttribute('data-role-level');
                         const roleName = button.getAttribute('data-role-name');
+                        const roleCategory = button.getAttribute('data-role-category');
                         const existingPerms = JSON.parse(button.getAttribute('data-existing'));
 
                         // Set Hidden Input and Title
                         document.getElementById('modal_role_id').value = roleId;
                         document.getElementById('modal_role_name_display').innerText = roleName;
+
+                        // ✅ FILTER MODULE DROPDOWN
+                        const moduleSelect = document.getElementById('dynamic_module_select');
+                        const options = moduleSelect.querySelectorAll('option');
+
+                        console.log(options);
+                        options.forEach(option => {
+                            if (!option.value) return;
+                            option.style.display = 'block'
+                            // 👉 show only matching module
+                            // if (roleName.toLowerCase() === 'Super Admin') {
+                            //     option.style.display = 'block';
+                            // }
+                            // if (option.value === roleCategory) {
+                            //     option.style.display = 'block';
+                            // } else {
+                            //     option.style.display = 'none';
+                            // }
+                        });
+
+                        moduleSelect.value = roleCategory; // auto select
+
+                        // Trigger change manually
+                        moduleSelect.dispatchEvent(new Event('change'));
 
                         // Populate Existing Permissions Box
                         const container = document.getElementById('current_permissions_container');
@@ -624,7 +662,7 @@
                 // ==========================================
 
                 // Safely pass the grouped PHP array to JavaScript
-                const groupedPermissions = @json($permissions);
+                const groupedPermissions = JSON.parse(document.getElementById('grouped-permissions-data').textContent);
 
                 const moduleSelect = document.getElementById('dynamic_module_select');
                 const actionContainer = document.getElementById('action_select_container');

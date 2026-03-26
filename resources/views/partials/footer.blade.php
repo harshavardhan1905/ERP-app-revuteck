@@ -50,6 +50,31 @@
 <script src="{{ asset('assets/js/widgets/general.js') }}"></script>
 <script src="{{ asset('assets/js/layouts/demo1.js') }}"></script>
   <!-- End of Scripts -->
+   <script>
+        // ==========================================
+        // CUSTOM TABLE SEARCH FILTER
+        // ==========================================
+        const searchInput = document.getElementById('searchInput');
+
+        if (searchInput) {
+            searchInput.addEventListener('keyup', function(e) {
+                console.log("SEARCH WORKING from footer");
+                const searchTerm = e.target.value.toLowerCase().trim();
+
+                // ✅ GET FRESH ROWS EVERY TIME
+                const tableRows = document.querySelectorAll('#kt_datatable_1 tbody tr');
+
+                tableRows.forEach(row => {
+                    if (row.querySelector('td[colspan]')) return;
+
+                    const rowText = row.textContent.toLowerCase();
+
+                    row.style.display = rowText.includes(searchTerm) ? '' : 'none';
+                });
+            });
+        }
+  </script>
+  
    @if(session('success') || $errors->any())
 <script>
     document.addEventListener('DOMContentLoaded', function() {

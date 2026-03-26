@@ -78,7 +78,10 @@
                         <div class="flex items-center gap-2.5">
                             <div class="kt-input max-w-48">
                                 <i class="ki-filled ki-magnifier"></i>
-                                <input data-kt-datatable-search="#kt_datatable_1" placeholder="Search Role" type="text">
+                                <input data-kt-datatable-search="#kt_datatable_1"
+                                       id="searchInput"
+                                       placeholder="Search Role" 
+                                       type="text">
                             </div>
 
                             <a href="{{ url('/roles/trash') }}" class="kt-btn kt-btn-icon kt-btn-light kt-btn-sm relative" title="Trash Bin">

@@ -76,12 +76,12 @@
                         <div class="flex items-center gap-2.5">
                             <div class="kt-input max-w-48">
                                 <i class="ki-filled ki-magnifier"></i>
-                                <input data-kt-datatable-search="#kt_datatable_1" placeholder="Search Role" type="text">
+                                <input data-kt-datatable-search="#kt_datatable_1" id="searchInput" placeholder="Search Role" type="text">
                             </div>
                         </div>
                     </div>
                     <div class="kt-card-table">
-                        <div class="grid"  data-kt-datatable-page-size="5" id="teams_datatable">
+                        <div class="grid"  data-kt-datatable="true" data-kt-datatable-page-size="5" id="teams_datatable">
                         <div class="kt-scrollable-x-auto">
                         <table class="kt-table kt-table-border table-fixed" data-kt-datatable-table="true" id="kt_datatable_1">
                 <thead>

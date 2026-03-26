@@ -16,14 +16,15 @@ class RolesPermissionsController extends Controller
      */
     public function index()
     {
-        $raw_data = DB::table('master_erp.role_permissions as a')
-            ->leftJoin('master_erp.roles as b', 'a.role_id', '=', 'b.id')
+        $raw_data = DB::table('master_erp.roles as b')
+            ->leftJoin('master_erp.role_permissions as a', 'b.id', '=', 'a.role_id')
             ->leftJoin('master_erp.permissions as c', 'a.permission_id', '=', 'c.id')
             ->select(
                 'b.id as role_id',
                 'b.role_name',
                 'b.role_code',
                 'b.role_level',
+                'b.role_category',
                 'c.id as permission_id',
                 'c.permission_name',
                 'c.module_name',
@@ -33,9 +34,8 @@ class RolesPermissionsController extends Controller
             ->orderBy('c.module_name')
             ->get();
 
-        // 2. Group the data by Role ID so we only have ONE row per role
         $data = $raw_data->groupBy('role_id')->map(function ($permissionsList, $role_id) {
-            $first = $permissionsList->first(); // Get the role details from the first item
+            $first = $permissionsList->first();
 
             return (object) [
                 'role_id'    => $role_id,
@@ -43,19 +43,30 @@ class RolesPermissionsController extends Controller
                 'role_code'  => $first->role_code,
                 'role_level' => $first->role_level,
 
-                // Extract a unique array of Modules (e.g., ['USER', 'COMPANY', 'BRANCH'])
-                'modules'    => $permissionsList->pluck('module_name')->unique()->filter()->values(),
+                // Module (role category)
+                'modules' => collect([$first->role_category])->filter()->values(),
 
-                // Count occurrences of each action (e.g., ['CREATE' => 5, 'VIEW' => 12, 'DELETE' => 2])
-                'actions' => $permissionsList->groupBy('action_name')->map(function ($items) {
-                    return $items->pluck('module_name')->unique()->filter()->values();
-                })->filter(),
+                // Actions grouped
+                'actions' => $permissionsList->filter(function ($item) {
+                    return $item->action_name != null;
+                })
+                    ->groupBy('action_name')
+                    ->map(function ($items) {
+                        return $items->pluck('module_name')->unique()->filter()->values();
+                    }),
 
-                // Extract a clean array of all permission names
-                'permissions' => $permissionsList->pluck('permission_name')->filter()->values(),
+                // Permission names
+                'permissions' => $permissionsList
+                    ->pluck('permission_name')
+                    ->filter()
+                    ->values(),
             ];
-        })->values(); // Reset the keys
-        $permissions = Permission::where('is_active', true)->get()->groupBy('module_name');
+        })->values();
+
+        $permissions = Permission::where('is_active', true)
+            ->get()
+            ->groupBy('module_name');
+
         return view('Administration.roles-permissions', compact('data', 'permissions'));
     }
 
