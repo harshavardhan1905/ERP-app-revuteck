@@ -21,23 +21,24 @@ class AuthController extends Controller
         // 1. Validate the form data
         // Removed the strict 'email' format requirement so you can type either 'admin123' or 'admin@gmail.com'
         $request->validate([
-            'email' => ['required'], 
+            'email' => ['required'],
             'password' => ['required'],
         ]);
 
         $remember = $request->has('remember');
 
         // 2. Find the user inside the database
-        // We query the 'username' column because your DB screenshot shows 'admin@gmail.com' is stored there.
-        $user = \App\Models\User::where('email', $request->email)->first();
-
+        // Find the user by either their email OR their username
+        $user = \App\Models\User::where('email', $request->email)
+            ->orWhere('username', $request->email)
+            ->first();
         // 3. Manual Password Check (For Plain Text)
         // This checks if the user exists AND if the plain text password matches what they typed
         if ($user && $user->password_hash === $request->password) {
-            
+
             // Log the user in manually
             Auth::login($user, $remember);
-            
+
             // Regenerate session to prevent session fixation attacks
             $request->session()->regenerate();
 
@@ -58,6 +59,6 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/login');
+        return redirect('/auth/login');
     }
 }

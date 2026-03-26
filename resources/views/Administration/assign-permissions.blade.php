@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html class="h-full" data-kt-theme="true" data-kt-theme-mode="light" dir="ltr" lang="en">
+
 <head>
     @include('partials.header')
 </head>
+
 <body class="antialiased flex h-full text-base text-foreground bg-background demo1 kt-sidebar-fixed kt-header-fixed">
-    
+
     <script>
         const defaultThemeMode = 'light'; // light|dark|system
         let themeMode;
@@ -25,15 +27,15 @@
             document.documentElement.classList.add(themeMode);
         }
     </script>
-    
+
     <div class="flex grow">
         @include('partials.sidebar')
-        
+
         <main class="grow pt-3" id="content" role="content">
             <div class="kt-container-fixed">
-                
+
                 <div class="flex flex-wrap items-center justify-between gap-5 pb-7.5">
-                    
+
                     <div class="flex flex-col justify-center gap-2">
                         <h1 class="text-xl font-medium leading-none text-mono">
                             Roles Permissions
@@ -41,14 +43,14 @@
                         <div class="flex items-center gap-2 text-sm font-normal text-secondary-foreground">
                             Assign permissions to the roles
                         </div>
-                    </div> 
-                    
+                    </div>
+
                     @isset($role)
                     <div class="flex flex-wrap items-center gap-4">
-                        
+
                         <div class="flex flex-col text-right pr-4 border-r border-border">
                             <div class="text-base font-semibold text-foreground">
-                                {{ $role->role_name }} 
+                                {{ $role->role_name }}
                                 <span class="text-xs text-muted-foreground font-normal ml-1">({{ $role->role_code }})</span>
                             </div>
                             <div class="flex items-center justify-end gap-2 mt-1">
@@ -57,24 +59,24 @@
                             </div>
                         </div>
 
-                       
-                        
+
+
                     </div>
                     @endisset
                 </div>
 
                 @if(session('success'))
-                    <div class="kt-alert kt-alert-success mb-4">
-                        {{ session('success') }}
-                    </div>
+                <div class="kt-alert kt-alert-success mb-4">
+                    {{ session('success') }}
+                </div>
                 @endif
-                
+
                 @if(isset($data))
                 <div class="grid gap-5 lg:gap-7.5 mb-5">
                     <div class="lg:col-span-4">
                         <div class="grid">
                             <div class="kt-card kt-card-grid h-full min-w-full">
-                                
+
                                 <div class="kt-card-header flex flex-wrap items-center justify-between gap-2 shadow-none">
                                     <h3 class="kt-card-title">Roles & Permissions</h3>
                                     <div class="flex items-center gap-2.5">
@@ -108,30 +110,34 @@
                                                 </thead>
                                                 <tbody>
                                                     @forelse($data as $row)
-                                                        <tr>
-                                                            <td>
-                                                                <div class="flex flex-col gap-1">
-                                                                    <span class="font-medium text-sm text-mono">{{ $row->role_name }}</span>
-                                                                    <span class="text-xs text-muted-foreground">Code: {{ $row->role_code }}</span>
-                                                                </div>
-                                                            </td>
-                                                            <td><span class="kt-badge kt-badge-outline kt-badge-primary">{{ $row->role_level }}</span></td>
-                                                            <td><span class="kt-badge kt-badge-outline kt-badge-success">{{ strtoupper($row->module_name) }}</span></td>
-                                                            <td><span class="text-sm text-muted-foreground">{{ strtoupper($row->action_name) }}</span></td>
-                                                            <td><span class="text-sm">{{ $row->permission_name }}</span></td>
-                                                            <td class="text-right">
-                                                                <a href="{{ route('Administration.assign-permissions', $row->role_id) }}" class="kt-btn kt-btn-primary kt-btn-sm">Assign</a>
-                                                            </td>
-                                                        </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <div class="flex flex-col gap-1">
+                                                                <span class="font-medium text-sm text-mono">{{ $row->role_name }}</span>
+                                                                <span class="text-xs text-muted-foreground">Code: {{ $row->role_code }}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td><span class="kt-badge kt-badge-outline kt-badge-primary">{{ $row->role_level }}</span></td>
+                                                        <td><span class="kt-badge kt-badge-outline kt-badge-success">{{ strtoupper($row->module_name) }}</span></td>
+                                                        <td><span class="text-sm text-muted-foreground">{{ strtoupper($row->action_name) }}</span></td>
+                                                        <td><span class="text-sm">{{ $row->permission_name }}</span></td>
+                                                        <td class="text-right">
+                                                            <a href="{{ route('Administration.assign-permissions', $row->role_id) }}" class="kt-btn kt-btn-primary kt-btn-sm">Assign</a>
+                                                        </td>
+                                                    </tr>
                                                     @empty
-                                                        <tr><td colspan="6" class="text-center py-10 text-muted-foreground">No role permissions found</td></tr>
+                                                    <tr>
+                                                        <td colspan="6" class="text-center py-10 text-muted-foreground">No role permissions found</td>
+                                                    </tr>
                                                     @endforelse
                                                 </tbody>
                                             </table>
                                         </div>
                                         <div class="kt-card-footer justify-center md:justify-between flex-col md:flex-row gap-5 text-secondary-foreground text-sm font-medium">
                                             <div class="flex items-center gap-2 order-2 md:order-1">Show <select class="kt-select w-16" data-kt-datatable-size="true" data-kt-select="" name="perpage"></select> per page</div>
-                                            <div class="flex items-center gap-4 order-1 md:order-2"><span data-kt-datatable-info="true"></span><div class="kt-datatable-pagination" data-kt-datatable-pagination="true"></div></div>
+                                            <div class="flex items-center gap-4 order-1 md:order-2"><span data-kt-datatable-info="true"></span>
+                                                <div class="kt-datatable-pagination" data-kt-datatable-pagination="true"></div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -153,9 +159,9 @@
                                 <i class="ki-filled ki-magnifier"></i>
                                 <input data-kt-datatable-search="#assigned_table_1" placeholder="Search..." type="text">
                             </div>
-                             <button class="kt-btn kt-btn-primary" data-kt-modal-toggle="#assign_permission_modal">
-                            <i class="ki-filled ki-plus"></i> Assign Permission
-                        </button>
+                            <button class="kt-btn kt-btn-primary" data-kt-modal-toggle="#assign_permission_modal">
+                                <i class="ki-filled ki-plus"></i> Assign Permission
+                            </button>
                         </div>
                     </div>
 
@@ -193,22 +199,24 @@
                                     </tbody>
                                 </table>
                             </div>
-                            
+
                             <div class="kt-card-footer justify-center md:justify-between flex-col md:flex-row gap-5 text-secondary-foreground text-sm font-medium">
                                 <div class="flex items-center gap-2 order-2 md:order-1">Show <select class="kt-select w-16" data-kt-datatable-size="true" data-kt-select="" name="perpage"></select> per page</div>
-                                <div class="flex items-center gap-4 order-1 md:order-2"><span data-kt-datatable-info="true"></span><div class="kt-datatable-pagination" data-kt-datatable-pagination="true"></div></div>
+                                <div class="flex items-center gap-4 order-1 md:order-2"><span data-kt-datatable-info="true"></span>
+                                    <div class="kt-datatable-pagination" data-kt-datatable-pagination="true"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 @endisset
 
-            </div> 
+            </div>
         </main>
         @include('partials.footer')
     </div>
-    
-    
+
+
     <div class="kt-modal hidden" data-kt-modal="true" id="delete_confirm_modal">
         <div class="kt-modal-dialog flex items-center justify-center min-h-screen p-4">
             <div class="kt-modal-content !max-w-[400px] w-full bg-background border border-border rounded-xl shadow-xl overflow-hidden relative">
@@ -241,7 +249,7 @@
     <div class="kt-modal hidden" data-kt-modal="true" id="assign_permission_modal">
         <div class="kt-modal-dialog flex items-center justify-center min-h-screen p-4">
             <div class="kt-modal-content !max-w-[550px] w-full bg-background border border-border rounded-xl shadow-xl overflow-hidden relative">
-                
+
                 <div class="kt-modal-header py-4 px-5 border-b border-border flex justify-between items-center">
                     <h3 class="kt-modal-title font-semibold text-lg text-mono">Assign New Permission</h3>
                     <button class="kt-btn kt-btn-sm kt-btn-icon kt-btn-ghost" data-kt-modal-dismiss="true">
@@ -252,16 +260,16 @@
                 <form method="POST" action="{{ url('/roles-permissions/assign') }}">
                     @csrf
                     <input type="hidden" name="role_id" value="{{ $role->id }}">
-                    
+
                     <div class="kt-modal-body p-6">
-                        
+
                         <div class="mb-6">
                             <label class="text-sm font-medium mb-3 block">Currently Assigned Permissions:</label>
                             <div class="flex flex-wrap gap-2 max-h-32 overflow-y-auto p-3 border border-border rounded-lg bg-secondary/20">
                                 @forelse($role->permissions as $perm)
-                                    <span class="kt-badge kt-badge-outline kt-badge-success kt-badge-sm">{{ $perm->permission_name }}</span>
+                                <span class="kt-badge kt-badge-outline kt-badge-success kt-badge-sm">{{ $perm->permission_name }}</span>
                                 @empty
-                                    <span class="text-xs text-muted-foreground">This role has no permissions yet.</span>
+                                <span class="text-xs text-muted-foreground">This role has no permissions yet.</span>
                                 @endforelse
                             </div>
                         </div>
@@ -273,9 +281,9 @@
                             <select name="permission_id" class="kt-select w-full" required>
                                 <option value="" disabled selected>-- Choose Permission --</option>
                                 @foreach($permissions as $perm)
-                                    <option value="{{ $perm->id }}">
-                                        {{ strtoupper($perm->module_name) }} - {{ strtoupper($perm->action_name) }} ({{ $perm->permission_name }})
-                                    </option>
+                                <option value="{{ $perm->id }}">
+                                    {{ strtoupper($perm->module_name) }} - {{ strtoupper($perm->action_name) }} ({{ $perm->permission_name }})
+                                </option>
                                 @endforeach
                             </select>
                             <p class="text-xs text-muted-foreground mt-2 flex items-center gap-1">
@@ -297,13 +305,13 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            
+
             // Delete Action Modal Logic
             let permissionIdToDelete = null;
 
             document.addEventListener('click', function(e) {
                 const button = e.target.closest('.trigger-delete-modal');
-                
+
                 if (button) {
                     permissionIdToDelete = button.getAttribute('data-id');
                     const permissionName = button.getAttribute('data-name');
@@ -327,7 +335,7 @@
                     csrfToken.type = 'hidden';
                     csrfToken.name = '_token';
                     csrfToken.value = '{{ csrf_token() }}';
-                    
+
                     const methodInput = document.createElement('input');
                     methodInput.type = 'hidden';
                     methodInput.name = '_method';
@@ -336,7 +344,7 @@
                     form.appendChild(csrfToken);
                     form.appendChild(methodInput);
                     document.body.appendChild(form);
-                    
+
                     form.submit();
                 }
             });
@@ -344,4 +352,5 @@
     </script>
 
 </body>
+
 </html>
